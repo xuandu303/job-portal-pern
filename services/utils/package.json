@@ -17,12 +17,16 @@
     "cloudinary": "^2.9.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "kafkajs": "^2.2.4",
+    "nodemailer": "^7.0.13"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.6",
+    "@types/kafkajs": "^1.8.2",
+    "@types/nodemailer": "^7.0.9",
     "concurrently": "^9.2.1",
     "nodemon": "^3.1.11",
     "typescript": "^5.9.3"
