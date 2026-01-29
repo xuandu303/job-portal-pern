@@ -26,6 +26,7 @@ export const startSendMailConsumer = async () => {
     console.log("Mail service consumer started, listening for sending mail")
 
     await consumer.run({
+      autoCommit: false,
       eachMessage: async ({ topic, partition, message }) => {
         try {
           const { to, subject, html } = JSON.parse(message.value?.toString() || "{}")
@@ -35,8 +36,8 @@ export const startSendMailConsumer = async () => {
             port: 465,
             secure: true,
             auth: {
-              user: "xyz",
-              pass: "yzx"
+              user: process.env.MAIL_USER!,
+              pass: process.env.MAIL_PASS!
             }
           })
 
@@ -48,6 +49,14 @@ export const startSendMailConsumer = async () => {
           })
 
           console.log(`Mail has been sent to ${to}`)
+
+          await consumer.commitOffsets([
+            {
+              topic,
+              partition,
+              offset: (Number(message.offset) + 1).toString(),
+            },
+          ])
         } catch (error) {
           console.log("Failed to send mail", error)
         }

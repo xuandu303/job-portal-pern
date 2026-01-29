@@ -1,7 +1,7 @@
 import "dotenv/config";
 
-import app from "./app.js";
 import { sql } from "./utils/db.js";
+import app from "./app.js";
 
 async function initDb() {
   try {
@@ -48,7 +48,7 @@ async function initDb() {
     console.log("Database tables checked/created successfully");
   } catch (error) {
     console.log("Error initializing database", error);
-    process.exit(1);
+    throw error;
   }
 }
 
@@ -58,4 +58,4 @@ initDb().then(() => {
       `Auth service is running on http://localhost:${process.env.PORT}`,
     );
   });
-});
+}).catch(() => { });;
