@@ -7,11 +7,6 @@ export const startSendMailConsumer = async () => {
     const kafka = new Kafka({
       clientId: 'mail-service',
       brokers: [process.env.KAFKA_BROKER!],
-      retry: {
-        retries: 20,
-        initialRetryTime: 3000,
-        maxRetryTime: 30000
-      },
       logLevel: logLevel.ERROR,
     })
 
