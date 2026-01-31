@@ -9,6 +9,10 @@ export const connectKafka = async () => {
     const kafka = new Kafka({
       clientId: 'auth-service',
       brokers: [process.env.KAFKA_BROKER!],
+      retry: {
+        retries: 10,
+        initialRetryTime: 3000
+      },
       logLevel: logLevel.ERROR,
     })
 

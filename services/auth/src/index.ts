@@ -55,7 +55,7 @@ async function initDb() {
     console.log("Database tables checked/created successfully");
   } catch (error) {
     console.log("Error initializing database", error);
-    throw error;
+    process.exit(1);
   }
 }
 
@@ -65,4 +65,4 @@ initDb().then(() => {
       `Auth service is running on http://localhost:${process.env.PORT}`,
     );
   });
-}).catch(() => { });;
+}).catch(() => { });
