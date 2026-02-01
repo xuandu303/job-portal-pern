@@ -7,6 +7,8 @@ app.use(express.json())
 
 app.use('/api/user', userRoutes)
 
+const HOST = process.env.HOST || "0.0.0.0";
+
 app.listen(process.env.PORT, () => {
-  console.log(`User service is running on http://localhost:${process.env.PORT}`)
+  console.log(`User service is running on http://${HOST}:${process.env.PORT}`)
 })
