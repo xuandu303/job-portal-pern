@@ -23,6 +23,16 @@ services:
     depends_on:
       - kafka
 
+  user:
+    build: ./services/user
+    ports:
+      - "5002:5002"
+    env_file:
+      - ./services/user/.env
+    volumes:
+      - ./services/user:/app
+      - /app/node_modules
+
   kafka:
     image: apache/kafka:4.1.1
     container_name: kafka
@@ -38,4 +48,3 @@ services:
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      
