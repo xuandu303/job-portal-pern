@@ -9,6 +9,7 @@ RUN npm ci
 
 COPY . .
 
+RUN npm run build
 RUN chown -R app:app /app
 
 USER app
