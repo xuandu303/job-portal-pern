@@ -1,4 +1,24 @@
 {
+  "name": "job-portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run dev --prefix services/auth\" \"npm run dev --prefix services/user\" \"npm run dev --prefix services/utils\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XuanDu-303/job-portal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/XuanDu-303/job-portal/issues"
+  },
+  "homepage": "https://github.com/XuanDu-303/job-portal#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
   }
