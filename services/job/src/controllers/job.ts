@@ -95,3 +95,26 @@ export const createJob = TryCatch(async (req: AuthenticatedRequest, res) => {
     job: newJob
   })
 })
+
+export const updateJob = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const user = req.user;
+
+  const { title, description, salary, location, role, job_type, work_location, openings, is_active } = req.body;
+
+  const [existingJob] = await sql`SELECT posted_by_recruiter_id FROM jobs WHERE job_id = ${req.params.jobId}`;
+
+  if (!existingJob) {
+    throw new ErrorHandler(404, "Job not found")
+  }
+
+  if (existingJob.posted_by_recruiter_id !== user?.user_id) {
+    throw new ErrorHandler(403, "Forbiden: You are not allowed")
+  }
+
+  const [updatedJob] = await sql`UPDATE jobs SET title = ${title}, description = ${description}, salary = ${salary}, location = ${location}, role = ${role}, job_type = ${job_type}, work_location = ${work_location}, openings = ${openings}, is_active = ${is_active} WHERE job_id = ${req.params.jobId} RETURNING *`
+
+  res.json({
+    message: "Job updated successfully",
+    job: updatedJob
+  })
+})
