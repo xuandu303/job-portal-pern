@@ -33,6 +33,16 @@ services:
       - ./services/user:/app
       - /app/node_modules
 
+  job:
+    build: ./services/job
+    ports:
+      - "5003:5003"
+    env_file:
+      - ./services/job/.env
+    volumes:
+      - ./services/job:/app
+      - /app/node_modules
+
   kafka:
     image: apache/kafka:4.1.1
     container_name: kafka
