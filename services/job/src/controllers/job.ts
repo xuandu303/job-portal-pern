@@ -4,6 +4,8 @@ import getBuffer from "../utils/buffer.js";
 import { sql } from "../utils/db.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import { TryCatch } from "../utils/TryCatch.js";
+import { userInfo } from "os";
+import { application } from "express";
 
 
 export const createCompany = TryCatch(async (req: AuthenticatedRequest, res) => {
@@ -170,4 +172,10 @@ export const getAllActiveJobs = TryCatch(async (req: AuthenticatedRequest, res) 
   const jobs = (await sql.query(queryString, values)) as any[]
 
   res.json(jobs)
+})
+
+export const getSingleJob = TryCatch(async (req, res) => {
+  const [job] = await sql`SELECT * FROM jobs WHERE job_id = ${req.params.jobId}`;
+
+  res.json(job)
 })
