@@ -109,4 +109,119 @@ router.post("/career", async (req, res) => {
   }
 })
 
+router.post("/resume-analyser", async (req, res) => {
+  try {
+    const { pdfBase64 } = req.body;
+
+    if (!pdfBase64) {
+      return res.status(400).json({ message: "PDF data is required" })
+    }
+    const prompt = `
+      You are an expert ATS (Applicant Tracking System) analyzer.
+
+      Analyze the following resume and provide:
+
+      1. ATS compatibility score (0-100)
+      2. Detailed suggestions to improve the resume for better ATS performance
+
+      STRICT REQUIREMENTS:
+      - Your entire response MUST be valid JSON only
+      - Do NOT include markdown, explanations, or extra text
+      - ALL text content inside JSON MUST be written in Vietnamese
+      - If you use any language other than Vietnamese, the response is invalid
+
+      Return JSON with this exact structure:
+
+      {
+        "atsScore": 85,
+
+        "scoreBreakdown": {
+          "formatting": {
+            "score": 90,
+            "feedback": "Nhận xét ngắn gọn về định dạng"
+          },
+          "keywords": {
+            "score": 80,
+            "feedback": "Nhận xét về việc sử dụng từ khóa"
+          },
+          "structure": {
+            "score": 85,
+            "feedback": "Nhận xét về cấu trúc CV"
+          },
+          "readability": {
+            "score": 88,
+            "feedback": "Nhận xét về độ dễ đọc"
+          }
+        },
+
+        "suggestions": [
+          {
+            "category": "Tên nhóm vấn đề (Ví dụ: Định dạng, Nội dung, Từ khóa, Cấu trúc)",
+            "issue": "Mô tả vấn đề tìm thấy",
+            "recommendation": "Đề xuất cách cải thiện cụ thể",
+            "priority": "high/medium/low"
+          }
+        ],
+
+        "strengths": [
+          "Danh sách các điểm mạnh của CV đối với ATS"
+        ],
+
+        "summary": "Tóm tắt ngắn 2-3 câu về mức độ tương thích ATS tổng thể"
+      }
+
+      Focus on:
+      - File format compatibility
+      - Standard section headings
+      - Keyword optimization
+      - Formatting issues (tables, columns, graphics, icons, special characters)
+      - Contact information placement
+      - Date formatting
+      - Action verbs and quantifiable achievements
+      - Section organization and logical flow
+
+      Resume content:
+    `;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: [{
+        role: "user",
+        parts: [
+          {
+            text: prompt
+          }, {
+            inlineData: {
+              mimeType: "application/pdf",
+              data: pdfBase64.replace(/^data:application\/pdf; base64,/, "")
+            }
+          }
+        ]
+      }]
+    })
+
+    let jsonResponse;
+
+    try {
+      const rawText = response.text?.replace(/```json/g, "").replace(/```/g, "").trim();
+
+      if (!rawText) {
+        throw new Error("Ai did not return a valid text response")
+      }
+
+      jsonResponse = JSON.parse(rawText)
+    } catch (error) {
+      return res.status(500).json({
+        message: "Ai returned response that was not valid JSON",
+        rawResponse: response.text
+      })
+    }
+    res.json(jsonResponse)
+  } catch (error: any) {
+    res.status(500).json({
+      message: error.message,
+    })
+  }
+})
+
 export default router;
